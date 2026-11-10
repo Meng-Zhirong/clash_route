@@ -1,0 +1,120 @@
+[custom]
+; ============================================================
+; 香港单节点专用版 · 适合 OpenClash / Mihomo 订阅转换
+; 来源：Meng-Zhirong/clash_route/fenliu.ini
+; 设计：大陆及局域网直连；国外默认香港；应用可单独切换直连
+; 重要：这是订阅转换模板，不是可以直接导入 Clash 的 YAML
+; 订阅地址由 OpenClash / 订阅转换服务另外填写，不要写在此文件内
+; ============================================================
+
+enable_rule_generator=true
+overwrite_original_rules=true
+
+; 单节点不使用 exclude 关键词过滤，防止误删唯一节点。
+; 下面「🇭🇰 香港节点」通过 .* 匹配订阅里的所有节点，
+; 只要订阅确实只有一个香港节点，就会自动归入该组。
+
+; ============================================================
+; 1. 分流规则：从上到下，先匹配者优先
+; ============================================================
+
+; Adobe 可在「🟥 Adobe」中切换为 REJECT
+ruleset=🟥 Adobe,[]GEOSITE,adobe
+ruleset=🟥 Adobe,[]GEOIP,adobe,no-resolve
+
+; 本机 / 内网 / 国内网站直连
+ruleset=DIRECT,[]GEOSITE,private
+ruleset=DIRECT,[]GEOIP,private,no-resolve
+
+; Aethersailor 自定义直连 / 代理补充规则（沿用原配置）
+ruleset=DIRECT,clash-domain:https://testingcf.jsdelivr.net/gh/Aethersailor/Custom_OpenClash_Rules@main/rule/Custom_Direct_Domain.yaml,28800
+ruleset=DIRECT,clash-classic:https://testingcf.jsdelivr.net/gh/Aethersailor/Custom_OpenClash_Rules@main/rule/Custom_Direct_Classical_IP.yaml,28800
+ruleset=🚀 国外代理,clash-domain:https://testingcf.jsdelivr.net/gh/Aethersailor/Custom_OpenClash_Rules@main/rule/Custom_Proxy_Domain.yaml,28800
+ruleset=🚀 国外代理,clash-classic:https://testingcf.jsdelivr.net/gh/Aethersailor/Custom_OpenClash_Rules@main/rule/Custom_Proxy_Classical_IP.yaml,28800
+
+ruleset=DIRECT,[]GEOSITE,cn
+ruleset=DIRECT,[]GEOIP,cn,no-resolve
+ruleset=DIRECT,[]GEOSITE,google-cn
+ruleset=DIRECT,[]GEOSITE,category-games@cn
+ruleset=DIRECT,[]GEOSITE,category-game-platforms-download
+ruleset=DIRECT,[]GEOSITE,category-public-tracker
+
+; AI / 通讯 / 海外应用
+ruleset=📦 Notion,[]GEOSITE,notion
+ruleset=📦 Notion,[]GEOIP,notion,no-resolve
+ruleset=📨 Telegram,[]GEOSITE,telegram
+ruleset=📨 Telegram,[]GEOIP,telegram,no-resolve
+ruleset=🤖 ChatGPT,[]GEOSITE,openai
+ruleset=🧠 AI,[]GEOSITE,category-ai-!cn
+ruleset=🍎 Apple,[]GEOSITE,apple
+ruleset=🎬 YouTube,[]GEOSITE,youtube
+ruleset=🎥 Netflix,[]GEOSITE,netflix
+ruleset=🎥 Netflix,[]GEOIP,netflix,no-resolve
+ruleset=🎵 TikTok,[]GEOSITE,tiktok
+ruleset=🎵 TikTok,[]GEOIP,tiktok,no-resolve
+ruleset=📸 Instagram,[]GEOSITE,instagram
+ruleset=🐦 X,[]GEOSITE,twitter
+
+; 开发、游戏平台、交易所（沿用原站点分组）
+ruleset=🛠 GitHub,[]GEOSITE,github
+ruleset=🛠 GitHub,[]GEOIP,github,no-resolve
+ruleset=🚝 测速工具,[]GEOSITE,category-speedtest
+ruleset=🎮 Steam,[]GEOSITE,steam
+ruleset=🟦 OKX,[]GEOSITE,okx
+ruleset=🟨 Binance,[]GEOSITE,binance
+ruleset=🟪 Bybit,[]GEOSITE,bybit
+
+ruleset=📞 即时通讯,[]GEOSITE,category-communication
+ruleset=💬 社交媒体,[]GEOSITE,category-social-media-!cn
+ruleset=☁️ cloudflare,[]GEOSITE,cloudflare
+ruleset=☁️ cloudflare,[]GEOIP,cloudflare,no-resolve
+ruleset=🔎 Google,[]GEOSITE,google
+ruleset=🔎 Google,[]GEOIP,google,no-resolve
+ruleset=🪟 Microsoft,[]GEOSITE,microsoft
+ruleset=🪟 Microsoft,[]GEOIP,microsoft,no-resolve
+
+; 封锁站点与特殊端口 / 最终兜底
+ruleset=🚀 国外代理,[]GEOSITE,gfw
+ruleset=🔀 非标端口,clash-classic:https://testingcf.jsdelivr.net/gh/Aethersailor/Custom_OpenClash_Rules@main/rule/Custom_Port_Direct.yaml,28800
+ruleset=🐟 漏网之鱼,[]FINAL
+
+; ============================================================
+; 2. 应用策略：只有「香港代理 / 直连」两种实际出口
+; ============================================================
+custom_proxy_group=📦 Notion`select`[]🚀 国外代理`[]DIRECT
+custom_proxy_group=🍎 Apple`select`[]DIRECT`[]🚀 国外代理
+custom_proxy_group=🤖 ChatGPT`select`[]🚀 国外代理`[]DIRECT
+custom_proxy_group=🧠 AI`select`[]🚀 国外代理`[]DIRECT
+custom_proxy_group=📨 Telegram`select`[]🚀 国外代理`[]DIRECT
+custom_proxy_group=📞 即时通讯`select`[]🚀 国外代理`[]DIRECT
+custom_proxy_group=💬 社交媒体`select`[]🚀 国外代理`[]DIRECT
+custom_proxy_group=🎬 YouTube`select`[]🚀 国外代理`[]DIRECT
+custom_proxy_group=🎥 Netflix`select`[]🚀 国外代理`[]DIRECT
+custom_proxy_group=🎵 TikTok`select`[]🚀 国外代理`[]DIRECT
+custom_proxy_group=📸 Instagram`select`[]🚀 国外代理`[]DIRECT
+custom_proxy_group=🐦 X`select`[]🚀 国外代理`[]DIRECT
+custom_proxy_group=🛠 GitHub`select`[]🚀 国外代理`[]DIRECT
+custom_proxy_group=🚝 测速工具`select`[]DIRECT`[]🚀 国外代理
+custom_proxy_group=🎮 Steam`select`[]DIRECT`[]🚀 国外代理
+custom_proxy_group=🟦 OKX`select`[]🚀 国外代理`[]DIRECT
+custom_proxy_group=🟨 Binance`select`[]🚀 国外代理`[]DIRECT
+custom_proxy_group=🟪 Bybit`select`[]🚀 国外代理`[]DIRECT
+custom_proxy_group=🟥 Adobe`select`[]🚀 国外代理`[]DIRECT`[]REJECT
+custom_proxy_group=🔎 Google`select`[]🚀 国外代理`[]DIRECT
+custom_proxy_group=☁️ cloudflare`select`[]🚀 国外代理`[]DIRECT
+custom_proxy_group=🪟 Microsoft`select`[]DIRECT`[]🚀 国外代理
+
+; ============================================================
+; 3. 基础出口
+; ============================================================
+custom_proxy_group=🐟 漏网之鱼`select`[]🌐 Default`[]DIRECT
+custom_proxy_group=🌐 Default`select`[]🚀 国外代理`[]DIRECT
+custom_proxy_group=🚀 国外代理`select`[]🇭🇰 香港节点`[]DIRECT
+
+; 原配置的非标端口策略：默认按照漏网之鱼出口；可切直连
+custom_proxy_group=🔀 非标端口`select`[]🐟 遵循规则`[]DIRECT
+custom_proxy_group=🐟 遵循规则`select`[]🐟 漏网之鱼
+
+; 唯一的实际节点池：名称无须包含“香港”、“HK”等关键字
+; 单节点不用 url-test / fallback / 地区正则，避免空组或无意义测速
+custom_proxy_group=🇭🇰 香港节点`select`.*
